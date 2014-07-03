@@ -1,0 +1,7 @@
+name: Time Spent
+type: module
+description: 'Monitors the time that user spend on site and pages.'
+package: Custom
+version: 8.x-1.x
+core: 8.x
+

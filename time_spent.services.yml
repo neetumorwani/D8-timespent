@@ -1,0 +1,5 @@
+# services:
+#   time_spent_event_subscriber:
+#     class: Drupal\time_spent\EventSubscriber\timeSpentSubscriber
+#     tags:
+#       - {name: event_subscriber}

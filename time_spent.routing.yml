@@ -1,0 +1,10 @@
+time_spent.admin_reports_time_spent:
+  path: '/admin/reports/time_spent'
+  parent: system.admin_reports
+  defaults:
+    _content: \Drupal\time_spent\Controller\timeSpentController::renderContent
+    _title: 'Time spent by users'
+  options:
+    _access_mode: ALL
+  requirements:
+    _permission: 'Access Content'

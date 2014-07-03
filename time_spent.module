@@ -1,0 +1,63 @@
+<?php
+
+define('TIME_SPENT_TIMER', 30); //seconds. the time between one ajax call and other
+define('TIME_SPENT_LIMIT', 30); //minutes. once this limit is reached we'll stop the monitoring
+
+/**
+ * Implements hook_menu_link_defaults()
+ */
+function time_spent_menu_link_defaults() {
+  $links = array();
+  $links['time_spent.admin_reports_time_spent'] = array(
+    'link_title' => 'Time Spent Reports',
+    'parent' => 'system.admin_reports',
+    'description' => 'Time Spent Reports shows time spent by all users on each node.',
+    'route_name' => 'time_spent.admin_reports_time_spent',
+  );
+  return $links;
+}
+
+/**
+ * Implements hook_theme()
+ */
+function time_spent_theme() {
+  $items = array(
+    'time_spent_content' => array(
+      'variables' => array('items' => array()),
+    ),
+  );
+
+  return $items;
+}
+
+/**
+ * Theme callback for d8_demo_content
+ */
+function theme_time_spent_content($variables) {
+  $output = '<h2> Rendering content using Time spent Theme function.</h2>';
+  $output .= '<ul>';
+  foreach($variables['items'] as $item) {
+    $output .= '<li>' . $item . '</li>';
+  }
+  $output .= '</ul>';
+
+  return $output;
+}
+
+function time_spent_js_alter(&$javascript) {
+  $js_path = drupal_get_path('module', 'time_spent') . '/js/time_spent.js';
+  $javascript[$js_path] = array(
+    'every_page' => 1,
+    'type' => 'file',
+    'data' => $js_path,
+    'scope' => 'header',
+    'cache' => 1,
+    'preprocess' => 1
+  );
+  $javascript['settings']['data'][] = array(
+    'time_spent' => array(
+      'timer' => TIME_SPENT_TIMER,
+    ),
+  );
+  
+  }
