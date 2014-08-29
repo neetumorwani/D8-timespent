@@ -190,24 +190,24 @@
 //    return $hms;
 //}
 //
-///**
-// * Determine if current user's role should be tracked.
-// */
-//function time_spent_user_has_role() {
-//  global $user;
-//  if ($user->uid <=  0) {
-//    return FALSE;
-//  }
-//  $roles = variable_get('time_spent_roles', 'all');
-//  //if all roles were uncheck at settings, no role will be tracked
-//  if ($roles == 'all') {
-//  return TRUE;
-//  }
-//  foreach ($roles as $role) {
-//    if (is_array($user->roles) && in_array($role, array_keys($user->roles))) {
-//    return TRUE;
-//    }
-//  }
+/**
+ * Determine if current user's role should be tracked.
+ */
+function time_spent_user_has_role() {
+  global $user;
+  if ($user->uid <=  0) {
+    return FALSE;
+  }
+  $roles = \Drupal::config('time_spent.settings')->get('time_spent_roles');
+  //if all roles were uncheck at settings, no role will be tracked
+  if ($roles == 'all') {
+  return TRUE;
+  }
+  foreach ($roles as $role) {
+    if (is_array($user->roles) && in_array($role, array_keys($user->roles))) {
+    return TRUE;
+    }
+  }
 //
 //  return $value;
 //}

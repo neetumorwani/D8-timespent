@@ -4,9 +4,4 @@ time_spent.config:
     _form: '\Drupal\time_spent\Form\TimeSpentConfigForm'
   requirements:
     _permission: 'administer time spent configuration'
-#social_stats.cron_config:
-#  path: '/admin/config/services/social-stats/cron-settings'
-#  defaults:
-#    _form: '\Drupal\social_stats\Form\SocialStatsCronConfigForm'
-#  requirements:
-#    _access: 'TRUE'
+
