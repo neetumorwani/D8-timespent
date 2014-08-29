@@ -1,7 +1,6 @@
 name: Time Spent
+description: Monitors the time that users spent on your site and pages.
 type: module
-description: 'Monitors the time that user spend on site and pages.'
-package: Custom
-version: 8.x-1.x
+package: Statistics
 core: 8.x
-
+configure: time_spent.config

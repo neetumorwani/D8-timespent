@@ -1,63 +1,222 @@
 <?php
-
-define('TIME_SPENT_TIMER', 30); //seconds. the time between one ajax call and other
-define('TIME_SPENT_LIMIT', 30); //minutes. once this limit is reached we'll stop the monitoring
-
-/**
- * Implements hook_menu_link_defaults()
- */
-function time_spent_menu_link_defaults() {
-  $links = array();
-  $links['time_spent.admin_reports_time_spent'] = array(
-    'link_title' => 'Time Spent Reports',
-    'parent' => 'system.admin_reports',
-    'description' => 'Time Spent Reports shows time spent by all users on each node.',
-    'route_name' => 'time_spent.admin_reports_time_spent',
-  );
-  return $links;
-}
-
-/**
- * Implements hook_theme()
- */
-function time_spent_theme() {
-  $items = array(
-    'time_spent_content' => array(
-      'variables' => array('items' => array()),
-    ),
-  );
-
-  return $items;
-}
-
-/**
- * Theme callback for d8_demo_content
- */
-function theme_time_spent_content($variables) {
-  $output = '<h2> Rendering content using Time spent Theme function.</h2>';
-  $output .= '<ul>';
-  foreach($variables['items'] as $item) {
-    $output .= '<li>' . $item . '</li>';
-  }
-  $output .= '</ul>';
-
-  return $output;
-}
-
-function time_spent_js_alter(&$javascript) {
-  $js_path = drupal_get_path('module', 'time_spent') . '/js/time_spent.js';
-  $javascript[$js_path] = array(
-    'every_page' => 1,
-    'type' => 'file',
-    'data' => $js_path,
-    'scope' => 'header',
-    'cache' => 1,
-    'preprocess' => 1
-  );
-  $javascript['settings']['data'][] = array(
-    'time_spent' => array(
-      'timer' => TIME_SPENT_TIMER,
-    ),
-  );
-  
-  }
+//
+//define('TIME_SPENT_TIMER', 30); //seconds. the time between one ajax call and other
+//define('TIME_SPENT_LIMIT', 30); //minutes. once this limit is reached we'll stop the monitoring
+//
+///**
+// * Implements hook_help().
+// */
+//function time_spent_help($route_name, RouteMatchInterface $route_match) {
+//  $output = '';
+//  switch ($route_name) {
+//    case "'help.page.time_spent'":
+//      $output = '<p>' . t("Monitors the time spent by a user on page.") . '</p>';
+//      break;
+//  }
+//  return $output;
+//}
+//
+///**
+// * Implements hook_permission().
+// */
+//function time_spent_permission() {
+//  return array(
+//    'view time spent stats' => array(
+//      'title' => t('View the statistics of time spent.'),
+//    ),
+//    'administer time spent configuration' => array(
+//      'title' => t('Configure the time spent module'),
+//    )
+//  );
+//}
+//
+///**
+// * Implements hook_js().
+// *
+// * Note, this hook is invoked/provided by the `js` module:
+// * https://drupal.org/project/js.
+// */
+////function time_spent_js() {
+////  return array(
+////    'ajax' => array(
+////      'callback' => 'time_spent_ajax',
+////    ),
+////  );
+////}
+//
+///**
+// * Implements hook_menu().
+// */
+//function time_spent_menu() {
+//  $items = array();
+//  $items['admin/reports/time_spent'] = array(
+//    'title' => "Time Spent",
+//    'description' => 'Reporting time spent by a user on page',
+//    'page callback' => 'time_spent_report',
+//    'access arguments' => array('view time spent stats'),
+//    'type' => MENU_NORMAL_ITEM,
+//    'file' => 'time_spent.admin.inc',
+//  );
+//  $items['js/time_spent/ajax/%/%'] = array(
+//    'page callback' => 'time_spent_ajax',
+//    'page arguments' => array(3),
+//    'access callback' => 'time_spent_ajax_check',
+//    'access arguments' => array(4),
+//  );
+//  $items['admin/reports/time_spent/timespent-list-users'] = array(
+//    'title' => t('Time Spent Listing'),
+//    'description' => t('Time Spent Record'),
+//    'page callback' => 'time_spent_record',
+//    'access callback' => TRUE,
+//    'access arguments' => array('Time Spent Record'),
+//    'type' => MENU_LOCAL_TASK,
+//    'file' => 'time_spent.admin.inc',
+//  );
+//
+//  $items['admin/reports/time_spent/timespent-list-users/%user'] = array(
+//    'title' => t('Time spent per user on each node'),
+//    'page callback' => 'time_spent_detail',
+//    'page arguments' => array(4),
+//    'access callback' => TRUE,
+//    'type' => MENU_LOCAL_TASK,
+//    'file' => 'time_spent.admin.inc',
+//    );
+//  return $items;
+//}
+//
+///**
+// * Access callback for time_spent_ajax().
+// */
+//function time_spent_ajax_check($sectoken) {
+//  return drupal_valid_token($sectoken);
+//}
+//
+///**
+// * Implements hook_init().
+// */
+//function time_spent_init() {
+//  //if user has a role who is going to be tracked, add javascript code
+//  if (time_spent_user_has_role()) {
+//    $timer = variable_get('time_spent_timer', TIME_SPENT_TIMER);
+//    $limit = variable_get('time_spent_limit', TIME_SPENT_LIMIT);
+//    $mynide = -1; //false value
+//    //checks if this is a node page. taxonomy or views pages won't be counted.
+//    //confirm if this node type and user role will be tracked
+//    $nodetypes = variable_get('time_spent_node_types', 'all');
+//    if ($node = menu_get_object()) {
+//      if (($nodetypes == 'all' || $nodetypes[$node->type] === $node->type )) {
+//        $mynide = $node->nid;
+//      }
+//    }
+//    drupal_add_js(drupal_get_path('module', 'time_spent') . '/time_spent.js');
+//    drupal_add_js(array('time_spent' => array('timer' => check_plain($timer), 'limit' => check_plain($limit), 'nid' => $mynide, 'sectoken' => drupal_get_token())), 'setting');
+//  }
+//}
+//
+///**
+// * Page callback for reporting time spent.
+// */
+//function time_spent_ajax($nid) {
+//  global $user;
+//  $timer = (int) variable_get('time_spent_timer', TIME_SPENT_TIMER);
+//
+//  // Monitors the time user spent on the site.
+//  // Check for existing record.
+//  $update = array();
+//  $timespent = db_query('SELECT * FROM {time_spent_site} WHERE uid = :uid', array(':uid' => $user->uid))->fetchObject();
+//  if ($timespent) {
+//    $update = array('time_spent_site_id');
+//    // Add existing timespent.
+//    $timespent->timespent += $timer;
+//  }
+//  else {
+//    $timespent = new stdClass();
+//    $timespent->uid = $user->uid;
+//    $timespent->timespent = $timer;
+//  }
+//
+//  // Write the timespent record.
+//  drupal_write_record('time_spent_site', $timespent, $update);
+//  module_invoke_all('time_spent_site', $user, $timespent->timespent);
+//  unset($timespent);
+//
+//  // Monitors time spent by page.
+//  if (is_numeric($nid) && $nid > 0) {
+//    // Check if this node already has a record for this user.
+//    $sql = "SELECT * FROM {time_spent_page} WHERE nid = :nid AND uid = :uid";
+//    $timespent = db_query($sql, array(':nid' => $nid, ':uid' => $user->uid))->fetchObject();
+//
+//    $update = array();
+//    if ($timespent) {
+//      $update = array('time_spent_id');
+//      // Add existing timespent.
+//      $timespent->timespent += $timer;
+//    }
+//    else {
+//      // Construct a time spent record.
+//      $timespent = new stdClass();
+//      $timespent->nid = (int)$nid;
+//      $timespent->uid = (int)$user->uid;
+//      $timespent->timespent = $timer;
+//    }
+//
+//    // Write the time spent on this page record.
+//    drupal_write_record('time_spent_page', $timespent, $update);
+//    module_invoke_all('time_spent_node', $user, $nid, $timespent->timespent);
+//  }
+//}
+//
+///**
+// * Helper function to convert seconds to hours, minutes, and seconds.
+// *
+// * @param int $sec
+// *   Seconds to convert.
+// * @param bool $padHours
+// *   If true, hours will be padded with preceding zeroes.
+// *
+// * @return string
+// *   Hours, minutes, and seconds of the form 00:00:00.
+// */
+//function time_spent_sec2hms($sec, $padHours = FALSE) {
+//    $hms = "";
+//    $hours = intval(intval($sec) / 3600);
+//    $hms .= ($padHours)
+//          ? str_pad($hours, 2, "0", STR_PAD_LEFT) . ":"
+//          : $hours . ":";
+//    $minutes = intval(($sec / 60) % 60);
+//    $hms .= str_pad($minutes, 2, "0", STR_PAD_LEFT) . ":";
+//    $seconds = intval($sec % 60);
+//    $hms .= str_pad($seconds, 2, "0", STR_PAD_LEFT);
+//    return $hms;
+//}
+//
+///**
+// * Determine if current user's role should be tracked.
+// */
+//function time_spent_user_has_role() {
+//  global $user;
+//  if ($user->uid <=  0) {
+//    return FALSE;
+//  }
+//  $roles = variable_get('time_spent_roles', 'all');
+//  //if all roles were uncheck at settings, no role will be tracked
+//  if ($roles == 'all') {
+//  return TRUE;
+//  }
+//  foreach ($roles as $role) {
+//    if (is_array($user->roles) && in_array($role, array_keys($user->roles))) {
+//    return TRUE;
+//    }
+//  }
+//
+//  return $value;
+//}
+//
+///**
+// * Implements hook_views_api().
+// */
+//function time_spent_views_api() {
+//  return array(
+//    'api' => 3,
+//  );
+//}

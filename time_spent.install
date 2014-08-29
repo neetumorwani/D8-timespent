@@ -1,9 +1,19 @@
 <?php
-
 /**
  * @file
- * Install, update and uninstall functions for the d8_demo module.
+ * Install this module
  */
+
+/**
+ * Implements hook_uninstall().
+ */
+function time_spent_uninstall() {
+  drupal_uninstall_schema('time_spent');
+  \Drupal::config('time_spent')->delete('time_spent_roles');
+  \Drupal::config('time_spent')->delete('time_spent_node_types');
+  \Drupal::config('time_spent')->delete('time_spent_timer');
+  \Drupal::config('time_spent')->delete('time_spent_limit');
+}
 
 /**
  * Implements hook_schema().
@@ -35,6 +45,10 @@ function time_spent_schema() {
         'not null' => TRUE,
         'default' => 0),
       ),
+    'indexes' => array(
+      'uid'        => array('uid'),
+      'nid'        => array('nid'),
+      ),
     'primary key' => array('time_spent_id'),
     );
   $schema['time_spent_site'] = array(
@@ -52,10 +66,13 @@ function time_spent_schema() {
         'not null' => TRUE,
         'default' => 0),
       'timespent' => array(
-        'description' => t('The time spent on the site by this user.'),
+        'description' => t('The time spent on the page by this user.'),
         'type' => 'int',
         'not null' => TRUE,
         'default' => 0),
+      ),
+    'indexes' => array(
+      'uid'        => array('uid'),
       ),
     'primary key' => array('time_spent_site_id'),
     );

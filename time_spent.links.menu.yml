@@ -1,0 +1,4 @@
+time_spent.config:
+  title: 'Time Spent settings'
+  description: 'Settings for module Time Spent.'
+  parent: system.admin_config_people
